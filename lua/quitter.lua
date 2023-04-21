@@ -9,7 +9,7 @@ local M
 local function setup()
   -- Check if there are any unsaved changes
   if vim.fn.getbufvar('%', '&modified') == 1 then
-    if vim.bo.diff ~= 1 then
+    if vim.opt.diff:get() ~= 1 then
       vim.cmd('diffthis')
     end
     -- Get the unsaved changes
