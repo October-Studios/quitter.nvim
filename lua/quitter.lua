@@ -18,4 +18,15 @@ local function setup()
   end
 end
 
-vim.cmd('autocmd QuitPre * if &modified | call luaeval("setup()") | endif')
+local augroup = api.nvim_create_augroup('quitter', {clear = true})
+
+api.nvim_create_autocmd('QuitPre', {
+  pattern = '*',
+  group = augroup,
+  command = 'if &modified | call luaeval("setup()") | endif')
+})
+
+return {
+  setup = setup,
+}
+
