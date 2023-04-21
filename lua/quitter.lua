@@ -17,8 +17,10 @@ function setup()
   -- get the changes made to the buffer
   local unsaved_changes = api.nvim_buf_get_lines(0, 0, -1, false)
 
+  local formatted = table.concat(unsaved_changes, "\n")
+
   -- construct the message for the pop-up window
-  local message = "Unsaved changes:\n\n" .. unsaved_changes .. "\n\nAre you sure you want to quit without saving?"
+  local message = "Unsaved changes:\n\n" .. formatted .. "\n\nAre you sure you want to quit without saving?"
 
   -- define the buttons for the pop-up window
   local buttons = {"&Quit Without Saving", "&Cancel"}
