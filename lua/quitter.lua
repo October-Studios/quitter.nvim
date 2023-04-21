@@ -6,7 +6,7 @@ local api = vim.api
 
 function setup()
   -- get the undo history
-  local undo_tree = vim.fn.undotree()
+  local undo_tree = api.nvim_exec('undo tree', true)
 
   -- check if there are any changes in the undo history
   if undo_tree == nil or #undo_tree.seq_undo == 0 then
