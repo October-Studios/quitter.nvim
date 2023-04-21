@@ -5,16 +5,30 @@
 local api = vim.api
 
 function setup()
-  local unsaved_changes = vim.fn.undotree()['seq_undo'][1]['changes']
+  -- get the undo history
+  local undo_tree = vim.fn.undotree()
+
+  -- check if there are any changes in the undo history
+  if undo_tree == nil or #undo_tree.seq_undo == 0 then
+    -- if there are no changes, do nothing
+    return
+  end
+
+  -- get the first change in the undo history
+  local unsaved_changes = undo_tree.seq_undo[1].changes
+
+  -- construct the message for the pop-up window
   local message = "Unsaved changes:\n\n" .. unsaved_changes .. "\n\nAre you sure you want to quit without saving?"
+
+  -- define the buttons for the pop-up window
   local buttons = {"&Quit Without Saving", "&Cancel"}
 
-  -- display the pop-up message with unsaved changes
+  -- display the pop-up window and get the user's choice
   local choice = vim.fn.confirm(message, buttons, {default = 2})
 
   -- if the user chooses to quit without saving, exit Neovim
   if choice == 1 then
-    vim.cmd('qa!')
+    vim.cmd('quit!')
   end
 end
 
