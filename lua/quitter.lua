@@ -22,11 +22,8 @@ function setup()
   -- construct the message for the pop-up window
   local message = "Unsaved changes:\n\n" .. formatted .. "\n\nAre you sure you want to quit without saving?"
 
-  -- define the buttons for the pop-up window
-  local buttons = {"&Quit Without Saving", "&Cancel"}
-
   -- display the pop-up window and get the user's choice
-  local choice = vim.fn.confirm(message, buttons, {default = 2})
+  local choice = vim.fn.confirm(message, "&Quit Without Saving\n&Cancel", {default = 2})
 
   -- if the user chooses to quit without saving, exit Neovim
   if choice == 1 then
