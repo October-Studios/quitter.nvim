@@ -1,1 +1,1 @@
-autocmd! QuitPre * lua require('quitter').setup()
+autocmd! QuitPre * if &modified | lua require('quitter').setup() | endif

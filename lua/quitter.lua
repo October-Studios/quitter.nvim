@@ -7,24 +7,16 @@ local api = vim.api
 local M
 
 local function setup()
-  -- Check if there are any unsaved changes
-  if vim.fn.getbufvar('%', '&modified') == 1 then
-    if vim.opt.diff:get() ~= 1 then
-      vim.cmd('diffthis')
-    end
-    -- Get the unsaved changes
-    local changes = vim.fn.execute('diffget').gsub(vim.fn.line2byte('w$'), '')
+  local unsaved_changes = vim.fn.undotree()['seq_undo'][1]['changes']
+  local message = "Unsaved changes:\n\n" .. unsaved_changes .. "\n\nAre you sure you want to quit without saving?"
+  local buttons = {"&Quit Without Saving", "&Cancel"}
 
-    -- Create the pop-up message
-    local message = 'Unsaved changes:\n' .. changes .. '\nDo you want to quit without saving?'
+  -- display the pop-up message with unsaved changes
+  local choice = vim.fn.confirm(message, buttons, {default = 2})
 
-    -- Show the pop-up message and prompt the user to confirm quitting without saving
-    local choice = vim.fn.confirm(message, '&Yes\n&No', 2)
-
-    -- If the user chooses not to quit, return to normal mode
-    if choice ~= 1 then
-      vim.cmd('stopinsert')
-    end
+  -- if the user chooses to quit without saving, exit Neovim
+  if choice == 1 then
+    vim.cmd('qa!')
   end
 end
 
