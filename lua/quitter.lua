@@ -18,4 +18,4 @@ local function setup()
   end
 end
 
-vim.cmd('autocmd QuitPre * if &modified | lua setup() | endif')
+vim.cmd('autocmd QuitPre * if &modified then lua setup() end')
