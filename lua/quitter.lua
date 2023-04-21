@@ -23,7 +23,7 @@ function setup()
   local message = "Unsaved changes:\n\n" .. formatted .. "\n\nAre you sure you want to quit without saving?"
 
   -- display the pop-up window and get the user's choice
-  local choice = vim.fn.confirm(message, "&Quit Without Saving\n&Cancel", {default = 2})
+  local choice = vim.fn.confirm(message, "&Quit Without Saving\n&Cancel", 2)
 
   -- if the user chooses to quit without saving, exit Neovim
   if choice == 1 then
