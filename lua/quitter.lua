@@ -6,17 +6,16 @@ local api = vim.api
 
 function setup()
   -- get the undo history
-  local undo_tree = api.nvim_exec('undo tree', true)
+  local undo_history = vim.fn.histget(':', 'undo')
 
   -- check if there are any changes in the undo history
-  if undo_tree == nil or #undo_tree.seq_undo == 0 then
+  if undo_history == nil or #undo_history == 0 then
     -- if there are no changes, do nothing
     return
   end
 
   -- get the first change in the undo history
-  local unsaved_changes = undo_tree.seq_undo[1].changes
-
+  local unsaved_changes = undo_history[1]
   -- construct the message for the pop-up window
   local message = "Unsaved changes:\n\n" .. unsaved_changes .. "\n\nAre you sure you want to quit without saving?"
 
