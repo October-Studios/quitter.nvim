@@ -5,17 +5,21 @@
 local api = vim.api
 
 function setup()
-  -- get the undo history
-  local undo_history = vim.fn.histget(':', 'undo')
+  -- get the changes made to the buffer since the last save
+  local changes = vim.api.nvim_buf_get_changes(0, {since = 0})
 
-  -- check if there are any changes in the undo history
-  if undo_history == nil or #undo_history == 0 then
+  -- check if there are any changes in the buffer
+  if changes == nil or #changes == 0 then
     -- if there are no changes, do nothing
     return
   end
 
-  -- get the first change in the undo history
-  local unsaved_changes = undo_history[1]
+  -- get the first change in the buffer
+  local unsaved_changes = ""
+  for _, change in ipairs(changes) do
+    unsaved_changes = unsaved_changes .. change[2]
+  end
+
   -- construct the message for the pop-up window
   local message = "Unsaved changes:\n\n" .. unsaved_changes .. "\n\nAre you sure you want to quit without saving?"
 
