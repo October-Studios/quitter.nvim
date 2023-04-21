@@ -6,7 +6,7 @@ local api = vim.api
 
 function setup()
   -- get the modified status of the buffer
-  local modified = api.nvim_buf_get_option(0, "modified")
+  local modified = vim.fn.line('$') ~= 1 or vim.fn.getbufvar(vim.fn.bufnr(''), '&modified') ~= 0
 
   -- check if the buffer has been modified
   if not modified then
@@ -14,10 +14,18 @@ function setup()
     return
   end
 
-  -- get the changes made to the buffer
-  local unsaved_changes = api.nvim_buf_get_lines(0, 0, -1, false)
+  -- get the changes made to the buffer since the last save
+  local current_lines = vim.fn.getbufline(vim.fn.bufnr(''), 1, '$')
+  local last_saved_lines = vim.fn.getline(1, '$')
+  local changes = {}
 
-  local formatted = table.concat(unsaved_changes, "\n")
+  for i, line in ipairs(current_lines) do
+    if line ~= last_saved_lines[i] then
+      table.insert(changes, line)
+    end
+  end
+
+  local formatted = table.concat(changes, "\n")
 
   -- construct the message for the pop-up window
   local message = "Unsaved changes:\n\n" .. formatted .. "\n\nAre you sure you want to quit without saving?"
