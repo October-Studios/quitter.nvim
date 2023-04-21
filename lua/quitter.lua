@@ -4,7 +4,7 @@
 -- Source: https://github.com/October-Studios/quitter.nvim
 local api = vim.api
 
-local function setup()
+function setup()
   local unsaved_changes = vim.fn.undotree()['seq_undo'][1]['changes']
   local message = "Unsaved changes:\n\n" .. unsaved_changes .. "\n\nAre you sure you want to quit without saving?"
   local buttons = {"&Quit Without Saving", "&Cancel"}
