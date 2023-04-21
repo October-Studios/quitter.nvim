@@ -4,8 +4,6 @@
 -- Source: https://github.com/October-Studios/quitter.nvim
 local api = vim.api
 
-local M
-
 local function setup()
   local unsaved_changes = vim.fn.undotree()['seq_undo'][1]['changes']
   local message = "Unsaved changes:\n\n" .. unsaved_changes .. "\n\nAre you sure you want to quit without saving?"
@@ -20,8 +18,4 @@ local function setup()
   end
 end
 
-M = {
-  setup = setup,
-}
-
-return M
+vim.cmd('autocmd QuitPre * if &modified | lua setup() | endif')
