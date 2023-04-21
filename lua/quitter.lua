@@ -5,20 +5,17 @@
 local api = vim.api
 
 function setup()
-  -- get the changes made to the buffer since the last save
-  local changes = vim.api.nvim_buf_get_changes(0, {since = 0})
+  -- get the modified status of the buffer
+  local modified = api.nvim_buf_get_option(0, "modified")
 
-  -- check if there are any changes in the buffer
-  if changes == nil or #changes == 0 then
+  -- check if the buffer has been modified
+  if not modified then
     -- if there are no changes, do nothing
     return
   end
 
-  -- get the first change in the buffer
-  local unsaved_changes = ""
-  for _, change in ipairs(changes) do
-    unsaved_changes = unsaved_changes .. change[2]
-  end
+  -- get the changes made to the buffer
+  local unsaved_changes = api.nvim_buf_get_lines(0, 0, -1, false)
 
   -- construct the message for the pop-up window
   local message = "Unsaved changes:\n\n" .. unsaved_changes .. "\n\nAre you sure you want to quit without saving?"
