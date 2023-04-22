@@ -19,9 +19,32 @@ function setup()
   local last_saved_lines = vim.fn.readfile(vim.fn.expand('%:p'))
   local changes = {}
 
-  for i, line in ipairs(current_lines) do
-    if line ~= last_saved_lines[i] then
-      table.insert(changes, i .. ': ' .. line)
+--  for i, line in ipairs(current_lines) do
+--    if line ~= last_saved_lines[i] then
+--      table.insert(changes, i .. ': ' .. line)
+--    end
+--  end
+
+  -- get the differences between the current buffer and the last saved version
+  local diff = vim.fn.diff(last_saved_lines, current_lines)
+
+  -- loop through the differences and add them to the changes table
+  for _, d in ipairs(diff) do
+    if d[1] == 1 and d[3] == #d[4] then
+      -- an entire line was added
+      table.insert(changes, d[1] .. '+: ' .. d[4][1])
+    elseif d[1] == #last_saved_lines and d[2] == 1 and d[4] == "" then
+      -- an entire line was deleted
+      table.insert(changes, d[1] .. '-: ' .. last_saved_lines[d[1]])
+    else
+      -- some characters were changed in the line
+      for i = 1, #d[4] do
+        local char = string.sub(d[4], i, i)
+        local old_char = last_saved_lines[d[1]][d[2] + i - 1]
+        if char ~= old_char then
+          table.insert(changes, d[1] .. ',' .. (d[1] + d[3] - 1) .. ': ' .. old_char .. ' -> ' .. char)
+        end
+      end
     end
   end
 
