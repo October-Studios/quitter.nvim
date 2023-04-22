@@ -26,7 +26,7 @@ function setup()
 --  end
 
   -- get the differences between the current buffer and the last saved version
-  local diff = vim.lsp.sync.compute_diff(last_saved_lines, current_lines)
+  local diff = vim.lsp.compute_diff(last_saved_lines, current_lines)
 
   print("DIFF: " .. diff)
   -- loop through the differences and add them to the changes table
