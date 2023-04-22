@@ -15,8 +15,8 @@ function setup()
   end
 
   -- get the changes made to the buffer since the last save
-  local current_lines = vim.fn.getbufline(vim.fn.bufnr(''), 1, '$')
-  local last_saved_lines = vim.fn.getbufline(vim.fn.bufnr(''), 1, 0)
+  local current_lines = api.nvim_buf_get_lines(0, 0, -1, false)
+  local last_saved_lines = vim.fn.readfile(vim.fn.expand('%:p'))
   local changes = {}
 
   for i, line in ipairs(current_lines) do
