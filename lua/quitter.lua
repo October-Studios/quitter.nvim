@@ -25,20 +25,21 @@ function setup()
 --    end
 --  end
 
-  print(last_saved_lines)
-  print(current_lines)
-
   -- get the differences between the current buffer and the last saved version
   local diff = vim.diff(table.concat(last_saved_lines, "\n"), table.concat(current_lines, "\n"))
 
+  if type(diff) ~= "table" then
+    return
+  end
+
   print("DIFF: " .. diff)
   -- loop through the differences and add them to the changes table
-  for _, d in ipairs(vim.split(diff, "\n")) do
-    print(d)
+  -- loop through the differences and add them to the changes table
+  for _, d in ipairs(diff) do
     if d[1] == 1 and d[3] == #d[4] then
       -- an entire line was added
       table.insert(changes, d[1] .. '+: ' .. d[4][1])
-    elseif d[1] == #last_saved_lines and d[2] == 1 and d[4] == "" then
+    elseif d[1] == #last_saved_lines and d[2] == 1 and (not d[4] or d[4] == "") then
       -- an entire line was deleted
       table.insert(changes, d[1] .. '-: ' .. last_saved_lines[d[1]])
     else
@@ -52,7 +53,6 @@ function setup()
       end
     end
   end
-
   local formatted = table.concat(changes, "\n")
 
   -- construct the message for the pop-up window
