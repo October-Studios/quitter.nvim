@@ -26,7 +26,7 @@ function setup()
 --  end
 
   -- get the differences between the current buffer and the last saved version
-  local diff = vim.diff(table.concat(last_saved_lines, "\n"), table.concat(current_lines"\n"))
+  local diff = vim.diff(table.concat(last_saved_lines, "\n"), table.concat(current_lines, "\n"))
 
   -- loop through the differences and add them to the changes table
   for _, d in ipairs(diff) do
