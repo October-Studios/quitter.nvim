@@ -38,7 +38,7 @@ function setup()
       table.insert(changes, d[1] .. '-: ' .. last_saved_lines[d[1]])
     else
       -- some characters were changed in the line
-      for i = 1, #d[4] do
+      for i = 1, (d[4] and #d[4] or 0) do
         local char = string.sub(d[4], i, i)
         local old_char = last_saved_lines[d[1]][d[2] + i - 1]
         if char ~= old_char then
