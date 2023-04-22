@@ -19,36 +19,50 @@ function setup()
   local last_saved_lines = vim.fn.readfile(vim.fn.expand('%:p'))
   local changes = {}
 
---  for i, line in ipairs(current_lines) do
---    if line ~= last_saved_lines[i] then
---      table.insert(changes, i .. ': ' .. line)
---    end
---  end
-
   -- get the differences between the current buffer and the last saved version
-  local diff = vim.lsp.compute_diff(last_saved_lines, current_lines)
+  local diff = vim.diff(last_saved_lines, current_lines)
 
-  print("DIFF: " .. diff)
-  -- loop through the differences and add them to the changes table
   -- loop through the differences and add them to the changes table
   for _, d in ipairs(diff) do
     if d[1] == 1 and d[3] == #d[4] then
       -- an entire line was added
       table.insert(changes, d[1] .. '+: ' .. d[4][1])
-    elseif d[1] == #last_saved_lines and d[2] == 1 and (not d[4] or d[4] == "") then
+    elseif d[1] == #last_saved_lines and d[2] == 1 and d[4] == "" then
       -- an entire line was deleted
       table.insert(changes, d[1] .. '-: ' .. last_saved_lines[d[1]])
     else
       -- some characters were changed in the line
-      for i = 1, (d[4] and #d[4] or 0) do
-        local char = string.sub(d[4], i, i)
-        local old_char = last_saved_lines[d[1]][d[2] + i - 1]
-        if char ~= old_char then
-          table.insert(changes, d[1] .. ',' .. (d[1] + d[3] - 1) .. ': ' .. old_char .. ' -> ' .. char)
+      local line_num = d[1]
+      local start_col = d[2]
+      local end_col = d[2] + #d[4] - 1
+      local old_line = last_saved_lines[line_num]
+      local new_line = current_lines[line_num]
+      local old_chars = string.sub(old_line, start_col, end_col)
+      local new_chars = string.sub(new_line, start_col, end_col)
+      local old_chars_iter = string.gmatch(old_chars, ".")
+      local new_chars_iter = string.gmatch(new_chars, ".")
+
+      while true do
+        local old_char = old_chars_iter()
+        local new_char = new_chars_iter()
+
+        if old_char == nil and new_char == nil then
+          -- we've reached the end of the line
+          break
+        elseif old_char == nil then
+          -- a new character was added to the end of the line
+          table.insert(changes, line_num .. ',' .. line_num .. ':' .. ' +' .. new_char)
+        elseif new_char == nil then
+          -- a character was deleted from the end of the line
+          table.insert(changes, line_num .. ',' .. line_num .. ':' .. ' -' .. old_char)
+        elseif old_char ~= new_char then
+          -- a character was changed in the line
+          table.insert(changes, line_num .. ',' .. line_num .. ':' .. ' ' .. old_char .. '->' .. new_char)
         end
       end
     end
   end
+
   local formatted = table.concat(changes, "\n")
 
   -- construct the message for the pop-up window
