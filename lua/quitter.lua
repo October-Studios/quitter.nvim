@@ -29,7 +29,7 @@ function setup()
   local diff = vim.diff(table.concat(last_saved_lines, "\n"), table.concat(current_lines, "\n"))
 
   -- loop through the differences and add them to the changes table
-  for _, d in ipairs(diff) do
+  for _, d in ipairs(vim.split(diff, "\n")) do
     if d[1] == 1 and d[3] == #d[4] then
       -- an entire line was added
       table.insert(changes, d[1] .. '+: ' .. d[4][1])
