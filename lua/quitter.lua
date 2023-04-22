@@ -26,11 +26,7 @@ function setup()
 --  end
 
   -- get the differences between the current buffer and the last saved version
-  local diff = vim.diff(table.concat(last_saved_lines, "\n"), table.concat(current_lines, "\n"))
-
-  if type(diff) ~= "table" then
-    return
-  end
+  local diff = api.diff(table.concat(last_saved_lines, "\n"), table.concat(current_lines, "\n"))
 
   print("DIFF: " .. diff)
   -- loop through the differences and add them to the changes table
