@@ -21,7 +21,7 @@ function setup()
 
   for i, line in ipairs(current_lines) do
     if line ~= last_saved_lines[i] then
-      table.insert(changes, line)
+      table.insert(changes, i .. ': ' .. line)
     end
   end
 
