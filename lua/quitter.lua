@@ -20,10 +20,10 @@ function setup()
   local changes = {}
 
   -- get the differences between the current buffer and the last saved version
-  local diff = vim.diff(table.concat(last_saved_lines, "\n"), table.concat(current_lines, "\n")) or {}
+  local diff = vim.fn.diff(last_saved_linesi, current_lines) or {}
 
   -- loop through the differences and add them to the changes table
-  for _, d in ipairs(vim.split(diff, "\n")) do
+  for _, d in ipairs(diff) do
     if d[1] == 1 and d[3] == #d[4] then
       -- an entire line was added
       table.insert(changes, d[1] .. '+: ' .. d[4][1])
